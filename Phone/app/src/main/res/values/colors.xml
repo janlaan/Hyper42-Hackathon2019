@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="klm_blue">#00A1DE</color>
+    <color name="klm_white">#FFFFFF</color>
+    <color name="klm_gray">#ECF0F1</color>
+    <color name="klm_text">#000000</color>
+    <color name="klm_primary_button">#E37222</color>
+    <color name="klm_secondary_button">#00A1DE</color>
+
+</resources>

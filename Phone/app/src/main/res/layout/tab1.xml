@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tab1_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp"
+        android:textColor="@color/klm_text"
+        android:textStyle="bold|normal"
+        android:text="Tab 1"        />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tab1_top">
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button one"
+            android:textColor="@color/klm_white"
+            android:background="@drawable/button_primary"
+            android:padding="15dp"
+            android:paddingHorizontal="32dp"
+            />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:background="@drawable/button_secondary"
+            android:paddingHorizontal="32dp"
+            android:id="@+id/button2" />
+
+    </LinearLayout>
+</RelativeLayout>
