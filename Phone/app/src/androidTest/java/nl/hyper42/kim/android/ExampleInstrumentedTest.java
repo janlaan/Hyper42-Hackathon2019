@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("nl.hyper42.kim.tablayoutexample", appContext.getPackageName());
+        assertEquals("nl.hyper42.kim.android", appContext.getPackageName());
     }
 }

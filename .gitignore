@@ -21,3 +21,7 @@ tmp
 .factorypath
 .pmd
 github.com/
+local.properties
+/captures
+.externalNativeBuild
+.gradle
