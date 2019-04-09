@@ -3,12 +3,13 @@ package nl.hyper42.kim.android.generated.info;
 
 import java.io.Serializable;
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Transactions implements Serializable
-{
+public class Transactions implements Serializable {
 
+    private final static long serialVersionUID = 2267656925843938827L;
     @SerializedName("labelTransactions")
     @Expose
     private String labelTransactions;
@@ -24,7 +25,6 @@ public class Transactions implements Serializable
     @SerializedName("transactionsList")
     @Expose
     private List<TransactionsList> transactionsList = null;
-    private final static long serialVersionUID = 2267656925843938827L;
 
     public String getLabelTransactions() {
         return labelTransactions;

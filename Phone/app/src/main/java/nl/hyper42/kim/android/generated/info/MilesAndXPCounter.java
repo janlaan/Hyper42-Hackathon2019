@@ -3,12 +3,13 @@ package nl.hyper42.kim.android.generated.info;
 
 import java.io.Serializable;
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MilesAndXPCounter implements Serializable
-{
+public class MilesAndXPCounter implements Serializable {
 
+    private final static long serialVersionUID = -4819598969577234907L;
     @SerializedName("labelMiles")
     @Expose
     private String labelMiles;
@@ -21,7 +22,6 @@ public class MilesAndXPCounter implements Serializable
     @SerializedName("xpGlobals")
     @Expose
     private List<XpGlobal> xpGlobals = null;
-    private final static long serialVersionUID = -4819598969577234907L;
 
     public String getLabelMiles() {
         return labelMiles;

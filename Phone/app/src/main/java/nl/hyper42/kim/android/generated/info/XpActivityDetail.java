@@ -2,12 +2,13 @@
 package nl.hyper42.kim.android.generated.info;
 
 import java.io.Serializable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class XpActivityDetail implements Serializable
-{
+public class XpActivityDetail implements Serializable {
 
+    private final static long serialVersionUID = 6932685377676648056L;
     @SerializedName("type")
     @Expose
     private String type;
@@ -17,7 +18,6 @@ public class XpActivityDetail implements Serializable
     @SerializedName("amountLabel")
     @Expose
     private String amountLabel;
-    private final static long serialVersionUID = 6932685377676648056L;
 
     public String getType() {
         return type;

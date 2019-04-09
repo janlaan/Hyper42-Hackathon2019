@@ -12,20 +12,17 @@
         android:layout_height="wrap_content"
         android:background="@color/klm_blue"
         app:title="@string/app_name"
-        app:titleTextColor="@color/klm_white"
-        >
-    </android.support.v7.widget.Toolbar>
+        app:titleTextColor="@color/klm_white"></android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tablayout"
-        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
         android:background="@color/klm_blue"
-        app:tabSelectedTextColor="@color/klm_white"
-        app:tabTextColor="@color/klm_gray"
         app:tabIndicatorColor="@color/klm_white"
-       />
+        app:tabSelectedTextColor="@color/klm_white"
+        app:tabTextColor="@color/klm_gray" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
