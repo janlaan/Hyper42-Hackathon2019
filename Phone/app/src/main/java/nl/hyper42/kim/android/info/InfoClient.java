@@ -4,10 +4,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class InfoClient {
-    /********
+    /**
      * URLS
-     *******/
-    private static final String ROOT_URL = "http://api.androiddeft.com/";
+     */
+    private static final String ROOT_URL = "http://localhost/";
+
     /**
      * Get Retrofit Instance
      */
@@ -17,6 +18,7 @@ public class InfoClient {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
+
     /**
      * Get API Service
      *
