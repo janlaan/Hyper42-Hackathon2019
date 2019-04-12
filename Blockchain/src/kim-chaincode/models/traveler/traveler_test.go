@@ -61,7 +61,7 @@ func createChainCode(t *testing.T) *shim.MockStub {
 
 func createTraveler(mockStub shim.MockStub) sc.Response {
 
-	return mockStub.MockInvoke("54534fdZ43ff", [][]byte{[]byte("registerTraveler"),
+	return mockStub.MockInvoke("54534fdZ43ff", [][]byte{[]byte("registerClaim"),
 		[]byte("892jkkjj"),
 		[]byte("Is allowed to buy alcohol"),
 		[]byte("Yes"),
@@ -86,7 +86,7 @@ func (s *DigitalIdentity) Invoke(APIstub shim.ChaincodeStubInterface) sc.Respons
 	switch function {
 	case "checkBundle":
 		return CheckHash(APIstub, args)
-	case "registerTraveler":
+	case "registerClaim":
 		return RegisterClaim(APIstub, args)
 	case "registerHash":
 		return RegisterHash(APIstub, args)

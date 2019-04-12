@@ -26,6 +26,11 @@ type Partial struct {
 }
 
 func RegisterClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+	amountOfArguments := 6
+	if len(args) != amountOfArguments {
+		return shim.Error(fmt.Sprintf("Incorrect number of arguments. Expecting %d.", amountOfArguments))
+	}
+
 	id, e := APIstub.CreateCompositeKey("claim", []string{args[0]})
 	if e != nil {
 		fmt.Println(e.Error())
@@ -50,7 +55,10 @@ func RegisterClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respon
 }
 
 func ChallengeClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-
+	amountOfArguments := 4
+	if len(args) != amountOfArguments {
+		return shim.Error(fmt.Sprintf("Incorrect number of arguments. Expecting %d.", amountOfArguments))
+	}
 	id, e := APIstub.CreateCompositeKey("claim", []string{args[0]})
 
 	creator, creatorError := APIstub.GetCreator()
@@ -72,6 +80,10 @@ func ChallengeClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respo
 }
 
 func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+	amountOfArguments := 3
+	if len(args) < amountOfArguments {
+		return shim.Error(fmt.Sprintf("Incorrect number of arguments. Expecting at least %d.", amountOfArguments))
+	}
 	idHash, e := APIstub.CreateCompositeKey("bundle", []string{args[0]})
 	if e != nil {
 		shim.Error("recreating hashIdfailed")
@@ -110,12 +122,17 @@ func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 }
 
 func RegisterHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-
+	amountOfArguments := 2
+	if len(args) != amountOfArguments {
+		return shim.Error(fmt.Sprintf("Incorrect number of arguments. Expecting %d.", amountOfArguments))
+	}
 	id, e := APIstub.CreateCompositeKey("bundle", []string{args[0]})
 	if e != nil {
 		fmt.Println(e.Error())
 		return shim.Error("Creating key failed")
 	}
+	//TODO: create and store hash
+	//insert Hash creation : this needs to be done
 	bundle := Bundle{
 		Hash: args[1],
 	}
@@ -134,15 +151,6 @@ func RegisterHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Respons
 
 	return shim.Success([]byte(id))
 
-}
-
-func CheckOfflineStorae(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-	//hashlocation := args[0]
-
-	for i := 1; i < len(args); i++ {
-
-	}
-	return shim.Error("dsf")
 }
 
 func isIdValid(APIstub shim.ChaincodeStubInterface, id string) bool {

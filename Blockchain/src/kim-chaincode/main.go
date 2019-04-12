@@ -1,9 +1,10 @@
-package kim_chaincode
+package main
 
 import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
+	"kim-chaincode/models/profilePic"
 	"kim-chaincode/models/traveler"
 )
 
@@ -19,14 +20,24 @@ func (s *DigitalIdentity) Invoke(APIstub shim.ChaincodeStubInterface) sc.Respons
 	fmt.Printf("calling funciton %s in the main", function)
 
 	switch function {
+	case "registerClaim":
+		return traveler.RegisterClaim(APIstub, args)
+
 	case "challengeClaim":
 		return traveler.ChallengeClaim(APIstub, args)
 
-	case "registerTraveler":
-		return traveler.RegisterClaim(APIstub, args)
+	case "storeProfilePic":
+		return profilePic.StoreProfilePic(APIstub, args)
+
+	case "retrieveProfilePic":
+		return profilePic.RetrieveProfilePic(APIstub, args)
 
 	case "registerHash":
 		return traveler.RegisterHash(APIstub, args)
+
+	case "checkHash":
+		return traveler.CheckHash(APIstub, args)
+
 	default:
 		return shim.Error("Error: CTO-1: Invalid Smart Contract function name.")
 	}
