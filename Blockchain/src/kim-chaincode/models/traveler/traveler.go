@@ -57,14 +57,11 @@ func ChallengeClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respo
 	if creatorError != nil {
 		return shim.Error("Error extracting submitter information.")
 	}
-	fmt.Println(creator)
 
 	travelerInformationPieceAsBytes, er := APIstub.GetState(id)
 	var travelerInformationPiece TravelerInformationPiece
 	err := json.Unmarshal(travelerInformationPieceAsBytes, &travelerInformationPiece)
-	if e == nil &&
-		er == nil &&
-		err == nil &&
+	if e == nil && er == nil && err == nil &&
 		travelerInformationPiece.Claim == args[1] &&
 		strings.Contains(travelerInformationPiece.RightToRead, string(creator)) &&
 		strings.Contains(travelerInformationPiece.WhereMayRead, args[3]) {
@@ -93,35 +90,20 @@ func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 		shim.Error("retrieving hash failed")
 	}
 
-	fmt.Println("kartoffel")
-	fmt.Println(responseGetBundle)
-
 	var bundle Bundle
 
 	err := json.Unmarshal(responseGetBundle, &bundle)
 	if err != nil {
-		fmt.Printf("ellende")
 		shim.Error("unmarshal failed")
 	}
 
-	fmt.Println(bundle.Hash)
-	fmt.Println("Einde kartoffel")
 	hash := sha256.Sum256([]byte(unHashed))
 
 	ding := fmt.Sprintf("%x", hash)
 
-	fmt.Println("start van de hash")
-	fmt.Printf("%x", hash)
-	fmt.Println("")
-	fmt.Println(ding)
-	fmt.Println(" end of hash")
 	if ding == bundle.Hash {
-		fmt.Println("succes maar je weet")
 		return shim.Success(nil)
 	} else {
-		fmt.Printf("nog steeds hier")
-		fmt.Printf("%x", hash)
-		fmt.Printf(bundle.Hash)
 		return shim.Error("fail")
 	}
 
@@ -137,9 +119,6 @@ func RegisterHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Respons
 	bundle := Bundle{
 		Hash: args[1],
 	}
-
-	fmt.Println("Hash zoal deze wordt weggeschreven")
-	fmt.Println(bundle.Hash)
 	bundleAsBytes, e := json.Marshal(bundle)
 
 	if e != nil {
@@ -147,7 +126,11 @@ func RegisterHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Respons
 		return shim.Error("Creating json failed")
 	}
 
-	APIstub.PutState(id, bundleAsBytes)
+	e = APIstub.PutState(id, bundleAsBytes)
+	if e != nil {
+		fmt.Println(e.Error())
+		return shim.Error("Putting new state failed")
+	}
 
 	return shim.Success([]byte(id))
 
