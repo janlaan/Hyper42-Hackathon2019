@@ -1,0 +1,2 @@
+exclude:
+- /Phone/app/src/main/java/nl/hyper42/kim/android/generated
