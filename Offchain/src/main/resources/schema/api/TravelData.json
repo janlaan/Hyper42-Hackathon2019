@@ -1,0 +1,10 @@
+{
+  "dataHashLocation": "someId",
+  "dataHashSalt": "salty",
+  "dataHash": "someHash",
+  "claimAddresses": [
+  	"adress1",
+  	"adress2"
+  ],
+  "photo": "some.gif" 
+}
