@@ -29,16 +29,10 @@ func TestCheckHash(t *testing.T) {
 	salt := "asdfa"
 	id1 := string(claim.GetPayload())
 	fmt.Println("dit is de id  " + id1)
-	//id2 := "1212"
-	//id3 := "1212"
-	//id4 := "1212"
 	response := mockStub.MockInvoke("asdfasdf", [][]byte{[]byte("checkBundle"),
 		[]byte(idBasicForBubdle),
 		[]byte(salt),
 		[]byte(id1),
-		//[]byte(id2),
-		//[]byte(id3),
-		//[]byte(id4),
 	})
 
 	if shim.OK != response.Status {
@@ -92,6 +86,6 @@ func (s *DigitalIdentity) Invoke(APIstub shim.ChaincodeStubInterface) sc.Respons
 		return RegisterHash(APIstub, args)
 
 	default:
-		return shim.Error("Error:teststup doesnt recognise " + function)
+		return shim.Error("Error:teststup does not recognise " + function)
 	}
 }

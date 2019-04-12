@@ -9,12 +9,12 @@ import (
 	"strings"
 )
 
-type TravelerInformationPiece struct {
+type Statement struct {
 	Claim        string `json:"claim"`
 	Response     string `json:"response"`
-	RightToRead  string `json:"rightToRead"`
-	WhereMayRead string `json:"whereMayRead"`
-	WhoMayRead   string `json:"whoMayRead"`
+	RightToRead  string `json:"rightToRead"`  // identiteits
+	WhereMayRead string `json:"whereMayRead"` // schiphol of iets
+	WhoMayRead   string `json:"whoMayRead"`   // shops, lounge dus meer rollen
 }
 
 type Bundle struct {
@@ -36,7 +36,7 @@ func RegisterClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respon
 		fmt.Println(e.Error())
 		return shim.Error("Creating key failed")
 	}
-	travelerInformationPiece := TravelerInformationPiece{
+	travelerInformationPiece := Statement{
 		Claim:        args[1],
 		Response:     args[2],
 		RightToRead:  args[3],
@@ -67,13 +67,13 @@ func ChallengeClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respo
 	}
 
 	travelerInformationPieceAsBytes, er := APIstub.GetState(id)
-	var travelerInformationPiece TravelerInformationPiece
-	err := json.Unmarshal(travelerInformationPieceAsBytes, &travelerInformationPiece)
+	var statement Statement
+	err := json.Unmarshal(travelerInformationPieceAsBytes, &statement)
 	if e == nil && er == nil && err == nil &&
-		travelerInformationPiece.Claim == args[1] &&
-		strings.Contains(travelerInformationPiece.RightToRead, string(creator)) &&
-		strings.Contains(travelerInformationPiece.WhereMayRead, args[3]) {
-		return shim.Success([]byte(travelerInformationPiece.Response))
+		statement.Claim == args[1] &&
+		strings.Contains(statement.RightToRead, string(creator)) &&
+		strings.Contains(statement.WhereMayRead, args[3]) {
+		return shim.Success([]byte(statement.Response))
 
 	}
 	return shim.Error("Error, not found or insufficient rights")
@@ -86,7 +86,7 @@ func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	}
 	idHash, e := APIstub.CreateCompositeKey("bundle", []string{args[0]})
 	if e != nil {
-		shim.Error("recreating hashIdfailed")
+		shim.Error("recreating hashId failed")
 	}
 
 	unHashed := args[1]
@@ -111,9 +111,7 @@ func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	hash := sha256.Sum256([]byte(unHashed))
 
-	ding := fmt.Sprintf("%x", hash)
-
-	if ding == bundle.Hash {
+	if fmt.Sprintf("%x", hash) == bundle.Hash {
 		return shim.Success(nil)
 	} else {
 		return shim.Error("fail")

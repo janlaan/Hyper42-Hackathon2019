@@ -45,7 +45,8 @@ func TestSwitchFunction(t *testing.T) {
 		t.FailNow()
 	}
 
-	if response4.Message != "Incorrect number of arguments. Expecting 2." {
+	if response4.Message != "Incorrect number of arguments. Expecting at least 5." {
+		fmt.Println(response4.Message)
 		t.Error("unexpected error message on response4.")
 		t.FailNow()
 	}
