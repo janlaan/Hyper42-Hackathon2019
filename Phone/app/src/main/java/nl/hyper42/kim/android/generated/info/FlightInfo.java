@@ -1,13 +1,14 @@
 
 package nl.hyper42.kim.android.generated.info;
 
-import java.io.Serializable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FlightInfo implements Serializable
-{
+import java.io.Serializable;
 
+public class FlightInfo implements Serializable {
+
+    private final static long serialVersionUID = 3385015030293939007L;
     @SerializedName("individual")
     @Expose
     private Individual individual;
@@ -17,7 +18,6 @@ public class FlightInfo implements Serializable
     @SerializedName("transactions")
     @Expose
     private Transactions transactions;
-    private final static long serialVersionUID = 3385015030293939007L;
 
     public Individual getIndividual() {
         return individual;

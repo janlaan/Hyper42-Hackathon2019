@@ -2,19 +2,19 @@
 package nl.hyper42.kim.android.generated.info;
 
 import java.io.Serializable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MoreTransactions implements Serializable
-{
+public class MoreTransactions implements Serializable {
 
+    private final static long serialVersionUID = 5020104312585475646L;
     @SerializedName("rel")
     @Expose
     private String rel;
     @SerializedName("href")
     @Expose
     private String href;
-    private final static long serialVersionUID = 5020104312585475646L;
 
     public String getRel() {
         return rel;

@@ -1,17 +1,15 @@
 package nl.hyper42.kim.android;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-
 public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
- Toolbar toolbar;
- ViewPager viewPager;
- TabLayout tabLayout;
-
+    Toolbar toolbar;
+    ViewPager viewPager;
+    TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,17 +19,15 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         tabLayout = findViewById(R.id.tablayout);
-        tabLayout.addTab(tabLayout.newTab().setText("First"));
-        tabLayout.addTab(tabLayout.newTab().setText("Second"));
-        tabLayout.addTab(tabLayout.newTab().setText("Third"));
 
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab1)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab2)));
+        tabLayout.addTab(tabLayout.newTab().setText("Third"));
 
         viewPager = findViewById(R.id.viewpager);
 
-        PagerAdapter
-                pagerAdapter = new PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
 
         viewPager.setAdapter(pagerAdapter);
 

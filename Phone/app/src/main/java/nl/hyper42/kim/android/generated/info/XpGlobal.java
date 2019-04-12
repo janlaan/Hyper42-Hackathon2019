@@ -2,12 +2,13 @@
 package nl.hyper42.kim.android.generated.info;
 
 import java.io.Serializable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class XpGlobal implements Serializable
-{
+public class XpGlobal implements Serializable {
 
+    private final static long serialVersionUID = 7161327658597591051L;
     @SerializedName("type")
     @Expose
     private String type;
@@ -23,7 +24,6 @@ public class XpGlobal implements Serializable
     @SerializedName("endDateLabel")
     @Expose
     private String endDateLabel;
-    private final static long serialVersionUID = 7161327658597591051L;
 
     public String getType() {
         return type;

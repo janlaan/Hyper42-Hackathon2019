@@ -2,12 +2,13 @@
 package nl.hyper42.kim.android.generated.info;
 
 import java.io.Serializable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class XpCounter implements Serializable
-{
+public class XpCounter implements Serializable {
 
+    private final static long serialVersionUID = 6883504504246229760L;
     @SerializedName("labelXP")
     @Expose
     private String labelXP;
@@ -23,7 +24,6 @@ public class XpCounter implements Serializable
     @SerializedName("ultimate")
     @Expose
     private Boolean ultimate;
-    private final static long serialVersionUID = 6883504504246229760L;
 
     public String getLabelXP() {
         return labelXP;

@@ -19,12 +19,14 @@ func (s *DigitalIdentity) Invoke(APIstub shim.ChaincodeStubInterface) sc.Respons
 	fmt.Printf("calling funciton %s in the main", function)
 
 	switch function {
-	case "checkEllende":
-		return traveler.RegisterTraveler(APIstub, args)
+	case "challengeClaim":
+		return traveler.ChallengeClaim(APIstub, args)
 
 	case "registerTraveler":
-		return traveler.RegisterTraveler(APIstub, args)
+		return traveler.RegisterClaim(APIstub, args)
 
+	case "registerHash":
+		return traveler.RegisterHash(APIstub, args)
 	default:
 		return shim.Error("Error: CTO-1: Invalid Smart Contract function name.")
 	}

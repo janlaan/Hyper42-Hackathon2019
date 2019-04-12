@@ -3,12 +3,13 @@ package nl.hyper42.kim.android.generated.info;
 
 import java.io.Serializable;
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Detail implements Serializable
-{
+public class Detail implements Serializable {
 
+    private final static long serialVersionUID = -7413794990349623094L;
     @SerializedName("transactionDate")
     @Expose
     private String transactionDate;
@@ -51,7 +52,6 @@ public class Detail implements Serializable
     @SerializedName("complementaryDetailDescriptionData")
     @Expose
     private List<String> complementaryDetailDescriptionData = null;
-    private final static long serialVersionUID = -7413794990349623094L;
 
     public String getTransactionDate() {
         return transactionDate;
