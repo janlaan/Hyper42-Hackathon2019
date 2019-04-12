@@ -31,15 +31,12 @@ func RegisterClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respon
 		fmt.Println(e.Error())
 		return shim.Error("Creating key failed")
 	}
-	fmt.Println(id)
-	fmt.Println(id)
-	fmt.Println(id)
 	travelerInformationPiece := TravelerInformationPiece{
 		Claim:        args[1],
 		Response:     args[2],
 		RightToRead:  args[3],
 		WhereMayRead: args[4],
-		WhoMayRead: args[5],
+		WhoMayRead:   args[5],
 	}
 
 	travelerInformationPieceAsBytes, e := json.Marshal(travelerInformationPiece)
@@ -49,7 +46,6 @@ func RegisterClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respon
 	}
 
 	APIstub.PutState(id, travelerInformationPieceAsBytes)
-fmt.Println(id)
 	return shim.Success([]byte(id))
 }
 
@@ -79,40 +75,83 @@ func ChallengeClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respo
 }
 
 func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-	idHash := args[0]
-	unhashed := args[1]
+	idHash, e := APIstub.CreateCompositeKey("bundle", []string{args[0]})
+	if e != nil {
+		shim.Error("recreating hashIdfailed")
+	}
+
+	unHashed := args[1]
 
 	for i := 2; i < len(args); i++ {
 		if !isIdValid(APIstub, args[i]) {
 			return shim.Error("Id is not valid")
 		}
-		unhashed = unhashed + args[i]
+		unHashed = unHashed + args[i]
 	}
-	response, e := APIstub.GetState(idHash)
+	responseGetBundle, e := APIstub.GetState(idHash)
 	if e != nil {
 		shim.Error("retrieving hash failed")
 	}
 
-	hash := sha256.Sum256([]byte(unhashed))
-fmt.Println("hash")
-fmt.Printf("%x", hash)
-	fmt.Println(" en of hash")
-	if fmt.Sprintf("%x", hash) == fmt.Sprintf("%x", response) {
+	fmt.Println("kartoffel")
+	fmt.Println(responseGetBundle)
+
+	var bundle Bundle
+
+	err := json.Unmarshal(responseGetBundle, &bundle)
+	if err != nil {
+		fmt.Printf("ellende")
+		shim.Error("unmarshal failed")
+	}
+
+	fmt.Println(bundle.Hash)
+	fmt.Println("Einde kartoffel")
+	hash := sha256.Sum256([]byte(unHashed))
+
+	ding := fmt.Sprintf("%x", hash)
+
+	fmt.Println("start van de hash")
+	fmt.Printf("%x", hash)
+	fmt.Println("")
+	fmt.Println(ding)
+	fmt.Println(" end of hash")
+	if ding == bundle.Hash {
+		fmt.Println("succes maar je weet")
 		return shim.Success(nil)
 	} else {
+		fmt.Printf("nog steeds hier")
+		fmt.Printf("%x", hash)
+		fmt.Printf(bundle.Hash)
 		return shim.Error("fail")
 	}
 
 }
 
-func RegisterHash (APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-	 Bundle bundle{
+func RegisterHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
+	id, e := APIstub.CreateCompositeKey("bundle", []string{args[0]})
+	if e != nil {
+		fmt.Println(e.Error())
+		return shim.Error("Creating key failed")
 	}
-	bundel.Hash
-	APIstub.PutState(args[0], args[1])
-}
+	bundle := Bundle{
+		Hash: args[1],
+	}
 
+	fmt.Println("Hash zoal deze wordt weggeschreven")
+	fmt.Println(bundle.Hash)
+	bundleAsBytes, e := json.Marshal(bundle)
+
+	if e != nil {
+		fmt.Println(e.Error())
+		return shim.Error("Creating json failed")
+	}
+
+	APIstub.PutState(id, bundleAsBytes)
+
+	return shim.Success([]byte(id))
+
+}
 
 func CheckOfflineStorae(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	//hashlocation := args[0]
@@ -120,7 +159,7 @@ func CheckOfflineStorae(APIstub shim.ChaincodeStubInterface, args []string) sc.R
 	for i := 1; i < len(args); i++ {
 
 	}
-return shim.Error("dsf")
+	return shim.Error("dsf")
 }
 
 func isIdValid(APIstub shim.ChaincodeStubInterface, id string) bool {

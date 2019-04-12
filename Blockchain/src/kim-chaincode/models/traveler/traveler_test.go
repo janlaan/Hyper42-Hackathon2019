@@ -11,15 +11,29 @@ func TestCheckHash(t *testing.T) {
 	mockStub := createChainCode(t)
 	claim := createTraveler(*mockStub)
 
-	id := "fpfpf"
+	idBasicForBubdle := "kandId"
+
+	response1 := mockStub.MockInvoke("j32njkkjn", [][]byte{[]byte("registerHash"),
+		[]byte(idBasicForBubdle),
+		[]byte("021803d6092b9bb785983761522a47ca78cf1f36105a28518dca000d15a51d1e"),
+	})
+
+	//response1 := mockStub.MockInvoke("j32njkkjn", [][]byte{[]byte("registerHash"),
+	//	[]byte("91d929cbd4386538794e77b5c4857a07d9811b475d05dba065a5c808ec57eeea"),
+	//})
+	if shim.OK != response1.Status {
+		fmt.Printf("error: %s", response1.Message)
+		t.Error("Invoke store hash failed")
+	}
+
 	salt := "asdfa"
 	id1 := string(claim.GetPayload())
-	fmt.Println(id1)
+	fmt.Println("dit is de id  " + id1)
 	//id2 := "1212"
 	//id3 := "1212"
 	//id4 := "1212"
 	response := mockStub.MockInvoke("asdfasdf", [][]byte{[]byte("checkBundle"),
-		[]byte(id),
+		[]byte(idBasicForBubdle),
 		[]byte(salt),
 		[]byte(id1),
 		//[]byte(id2),
@@ -28,10 +42,11 @@ func TestCheckHash(t *testing.T) {
 	})
 
 	if shim.OK != response.Status {
+
+		fmt.Printf("error: %s", response.Message)
+		t.Error("Invoke checkBundle failed")
+		t.FailNow()
 	}
-	fmt.Printf("error: %s", response.Message)
-	t.Error("Invoke checkBundle failed")
-	t.FailNow()
 }
 
 func createChainCode(t *testing.T) *shim.MockStub {
@@ -47,11 +62,11 @@ func createChainCode(t *testing.T) *shim.MockStub {
 func createTraveler(mockStub shim.MockStub) sc.Response {
 
 	return mockStub.MockInvoke("54534fdZ43ff", [][]byte{[]byte("registerTraveler"),
+		[]byte("892jkkjj"),
 		[]byte("Is allowed to buy alcohol"),
 		[]byte("Yes"),
 		[]byte("shops"),
 		[]byte("schiphol"),
-		[]byte("all"),
 		[]byte("all"),
 	})
 
@@ -73,6 +88,8 @@ func (s *DigitalIdentity) Invoke(APIstub shim.ChaincodeStubInterface) sc.Respons
 		return CheckHash(APIstub, args)
 	case "registerTraveler":
 		return RegisterClaim(APIstub, args)
+	case "registerHash":
+		return RegisterHash(APIstub, args)
 
 	default:
 		return shim.Error("Error:teststup doesnt recognise " + function)
