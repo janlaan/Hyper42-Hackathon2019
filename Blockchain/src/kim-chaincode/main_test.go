@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestDigitalIdentity_Init(t *testing.T) {
+func TestInit(t *testing.T) {
 
 	mockStub := createChainCode(t)
 	response1 := mockStub.MockInit("001", [][]byte{[]byte("Init")})
@@ -19,7 +19,7 @@ func TestDigitalIdentity_Init(t *testing.T) {
 
 }
 
-func TestSwitchFunction(t *testing.T) {
+func TestInvoke(t *testing.T) {
 	mockStub := createChainCode(t)
 
 	response1 := mockStub.MockInvoke("asd1", [][]byte{[]byte("registerClaim")})
