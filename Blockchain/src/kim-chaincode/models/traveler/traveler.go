@@ -10,11 +10,11 @@ import (
 )
 
 type Statement struct {
-	Claim        string `json:"claim"`
-	Response     string `json:"response"`
-	RightToRead  string `json:"rightToRead"`  // identiteits
-	WhereMayRead string `json:"whereMayRead"` // schiphol of iets
-	WhoMayRead   string `json:"whoMayRead"`   // shops, lounge dus meer rollen
+	Claim                  string `json:"claim"`
+	Response               string `json:"response"`
+	SpecificReadPermission string `json:"rightToRead"`  // identities
+	WhereMayRead           string `json:"whereMayRead"` // Schiphol or rotterdam Airport
+	WhichRolesMayRead      string `json:"whoMayRead"`   // shops, lounge, alcoholic beverages shops
 }
 
 type Bundle struct {
@@ -37,11 +37,11 @@ func RegisterClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respon
 		return shim.Error("Creating key failed")
 	}
 	travelerInformationPiece := Statement{
-		Claim:        args[1],
-		Response:     args[2],
-		RightToRead:  args[3],
-		WhereMayRead: args[4],
-		WhoMayRead:   args[5],
+		Claim:                  args[1],
+		Response:               args[2],
+		SpecificReadPermission: args[3],
+		WhereMayRead:           args[4],
+		WhichRolesMayRead:      args[5],
 	}
 
 	travelerInformationPieceAsBytes, e := json.Marshal(travelerInformationPiece)
@@ -71,7 +71,7 @@ func ChallengeClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respo
 	err := json.Unmarshal(travelerInformationPieceAsBytes, &statement)
 	if e == nil && er == nil && err == nil &&
 		statement.Claim == args[1] &&
-		strings.Contains(statement.RightToRead, string(creator)) &&
+		strings.Contains(statement.SpecificReadPermission, string(creator)) &&
 		strings.Contains(statement.WhereMayRead, args[3]) {
 		return shim.Success([]byte(statement.Response))
 
