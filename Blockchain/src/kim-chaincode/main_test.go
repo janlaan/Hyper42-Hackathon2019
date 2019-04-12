@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestInit(t *testing.T) {
+func TestDigitalIdentity_Init(t *testing.T) {
 
 	mockStub := createChainCode(t)
 	response1 := mockStub.MockInit("001", [][]byte{[]byte("Init")})
@@ -19,7 +19,7 @@ func TestInit(t *testing.T) {
 
 }
 
-func TestInvoke(t *testing.T) {
+func TestDigitalIdentity_Invoke(t *testing.T) {
 	mockStub := createChainCode(t)
 
 	response1 := mockStub.MockInvoke("asd1", [][]byte{[]byte("registerClaim")})

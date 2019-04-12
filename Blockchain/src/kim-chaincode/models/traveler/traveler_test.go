@@ -18,9 +18,6 @@ func TestCheckHash(t *testing.T) {
 		[]byte("021803d6092b9bb785983761522a47ca78cf1f36105a28518dca000d15a51d1e"),
 	})
 
-	//response1 := mockStub.MockInvoke("j32njkkjn", [][]byte{[]byte("registerHash"),
-	//	[]byte("91d929cbd4386538794e77b5c4857a07d9811b475d05dba065a5c808ec57eeea"),
-	//})
 	if shim.OK != response1.Status {
 		fmt.Printf("error: %s", response1.Message)
 		t.Error("Invoke store hash failed")
