@@ -51,7 +51,7 @@ func TestDigitalIdentity_Invoke(t *testing.T) {
 		t.FailNow()
 	}
 
-	if response5.Message != "Incorrect number of arguments. Expecting 2." {
+	if response5.Message != "Incorrect number of arguments. Expecting at least 4." {
 		fmt.Println(response5.Message)
 		t.Error("unexpected error message on response5.")
 		t.FailNow()

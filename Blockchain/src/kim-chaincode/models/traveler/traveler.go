@@ -80,7 +80,7 @@ func ChallengeClaim(APIstub shim.ChaincodeStubInterface, args []string) sc.Respo
 }
 
 func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-	amountOfArguments := 3
+	amountOfArguments := 5
 	if len(args) < amountOfArguments {
 		return shim.Error(fmt.Sprintf("Incorrect number of arguments. Expecting at least %d.", amountOfArguments))
 	}
@@ -120,19 +120,33 @@ func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 }
 
 func RegisterHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-	amountOfArguments := 2
-	if len(args) != amountOfArguments {
-		return shim.Error(fmt.Sprintf("Incorrect number of arguments. Expecting %d.", amountOfArguments))
+	amountOfArguments := 4
+	if len(args) < amountOfArguments {
+		return shim.Error(fmt.Sprintf("Incorrect number of arguments. Expecting at least %d.", amountOfArguments))
 	}
 	id, e := APIstub.CreateCompositeKey("bundle", []string{args[0]})
 	if e != nil {
 		fmt.Println(e.Error())
 		return shim.Error("Creating key failed")
 	}
-	//TODO: create and store hash
-	//insert Hash creation : this needs to be done
+
+	unHashed := args[1]
+
+	objectType := "pic"
+
+	for i := 2; i < len(args); i++ {
+		id, e := APIstub.CreateCompositeKey(objectType, []string{args[i]})
+		if !isIdValid(APIstub, id) || e != nil {
+			return shim.Error(id + " Id is not valid")
+		}
+		unHashed = unHashed + args[i]
+		objectType = "claim"
+	}
+
+	hash := sha256.Sum256([]byte(unHashed))
+
 	bundle := Bundle{
-		Hash: args[1],
+		Hash: fmt.Sprintf("%x", hash),
 	}
 	bundleAsBytes, e := json.Marshal(bundle)
 

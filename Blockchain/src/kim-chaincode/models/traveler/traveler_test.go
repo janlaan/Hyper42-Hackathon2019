@@ -1,11 +1,80 @@
 package traveler
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
 	"testing"
 )
+
+type ProfilePic struct {
+	PartialPic string `json:"partialPic"`
+}
+
+func TestRegisterHash(t *testing.T) {
+	id1 := "56423123"
+	id2 := "sd456sdf"
+	id3 := "dfg45dr6"
+	idPicture := "89bhjbhj"
+	salt := "5465123sdf23"
+	idBundle := "sdfsdf"
+	mockStub := createChainCode(t)
+	mockStub.MockInvoke("asdfasdf534wedf", [][]byte{[]byte("registerClaim"),
+		[]byte(id1),
+		[]byte("Is allowed to buy alcohol"),
+		[]byte("Yes"),
+		[]byte("shops"),
+		[]byte("schiphol"),
+		[]byte("all"),
+	})
+
+	mockStub.MockInvoke("54534fdZ43ff", [][]byte{[]byte("registerClaim"),
+		[]byte(id2),
+		[]byte("Is allowed to buy alcohol"),
+		[]byte("Yes"),
+		[]byte("shops"),
+		[]byte("schiphol"),
+		[]byte("all"),
+	})
+	mockStub.MockInvoke("kjhsdf89234", [][]byte{[]byte("registerClaim"),
+		[]byte(id3),
+		[]byte("Is allowed to buy alcohol"),
+		[]byte("Yes"),
+		[]byte("shops"),
+		[]byte("schiphol"),
+		[]byte("all"),
+	})
+
+	idPictureCreated, _ := mockStub.CreateCompositeKey("pic", []string{idPicture})
+	profilepic := ProfilePic{
+		PartialPic: "adsasd234dfasdsdf232334",
+	}
+	picAsBytes, _ := json.Marshal(profilepic)
+
+	mockStub.MockTransactionStart(idPictureCreated)
+	e := mockStub.PutState(idPictureCreated, picAsBytes)
+	mockStub.MockTransactionEnd(idPictureCreated)
+	responseStub, _ := mockStub.GetState(idPictureCreated)
+
+	fmt.Printf("%x", responseStub)
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+
+	response1 := mockStub.MockInvoke("sfsdf23443", [][]byte{[]byte("registerHash"),
+		[]byte(idBundle),
+		[]byte(salt),
+		[]byte(idPicture),
+		[]byte(id1),
+		[]byte(id2),
+		[]byte(id3),
+	})
+
+	fmt.Println(response1.Status)
+	fmt.Println(response1.Message)
+
+}
 
 func TestCheckHash(t *testing.T) {
 	mockStub := createChainCode(t)
