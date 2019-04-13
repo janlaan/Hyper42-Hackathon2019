@@ -2,3 +2,4 @@ exclude:
 - /Phone/app/src/main/java/nl/hyper42/kim/android/generated/.*
 - /Backend/src/main/java/nl/hyper42/kim/backend/dao/HLFInvoker.java
 - /Test/.*
+- /blockchain-platform/.*

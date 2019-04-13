@@ -1,0 +1,9 @@
+{
+  "FlightNumber": "KL123",
+  "Date": "2019-06-12",
+  "Departure": "AMS",
+  "DepartureCountry": "Netherlands",
+  "Destination": "BRU",
+  "DestinationCountry": "Belgium",
+  "FlightBlue": "Silver"
+}

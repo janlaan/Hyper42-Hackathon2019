@@ -1,7 +1,6 @@
 {
   "dataHashAddress": "salty",
   "dataHashSalt": "salty",
-  "dataHash": "someBase64EncodedHash",
   "claimAddresses": [
   	{"claimName": "nameOfClaim", "claimAddress": "addressOfClaim"}]
   ,

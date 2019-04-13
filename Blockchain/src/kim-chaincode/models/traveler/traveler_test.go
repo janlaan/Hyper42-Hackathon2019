@@ -55,9 +55,7 @@ func TestRegisterHash(t *testing.T) {
 	mockStub.MockTransactionStart(idPictureCreated)
 	e := mockStub.PutState(idPictureCreated, picAsBytes)
 	mockStub.MockTransactionEnd(idPictureCreated)
-	responseStub, _ := mockStub.GetState(idPictureCreated)
 
-	fmt.Printf("%x", responseStub)
 	if e != nil {
 		fmt.Println(e.Error())
 	}
@@ -77,33 +75,77 @@ func TestRegisterHash(t *testing.T) {
 }
 
 func TestCheckHash(t *testing.T) {
+	id1 := "56423123"
+	id2 := "sd456sdf"
+	id3 := "dfg45dr6"
+	idPicture := "89bhjbhj"
+	salt := "5465123sdf23"
+	idBundle := "sdfsdf"
 	mockStub := createChainCode(t)
-	claim := createTraveler(*mockStub)
-
-	idBasicForBubdle := "kandId"
-
-	response1 := mockStub.MockInvoke("j32njkkjn", [][]byte{[]byte("registerHash"),
-		[]byte(idBasicForBubdle),
-		[]byte("021803d6092b9bb785983761522a47ca78cf1f36105a28518dca000d15a51d1e"),
+	mockStub.MockInvoke("asdfasdf534wedf", [][]byte{[]byte("registerClaim"),
+		[]byte(id1),
+		[]byte("Is allowed to buy alcohol"),
+		[]byte("Yes"),
+		[]byte("shops"),
+		[]byte("schiphol"),
+		[]byte("all"),
 	})
 
-	if shim.OK != response1.Status {
-		fmt.Printf("error: %s", response1.Message)
-		t.Error("Invoke store hash failed")
+	mockStub.MockInvoke("54534fdZ43ff", [][]byte{[]byte("registerClaim"),
+		[]byte(id2),
+		[]byte("Is allowed to buy alcohol"),
+		[]byte("Yes"),
+		[]byte("shops"),
+		[]byte("schiphol"),
+		[]byte("all"),
+	})
+	mockStub.MockInvoke("kjhsdf89234", [][]byte{[]byte("registerClaim"),
+		[]byte(id3),
+		[]byte("Is allowed to buy alcohol"),
+		[]byte("Yes"),
+		[]byte("shops"),
+		[]byte("schiphol"),
+		[]byte("all"),
+	})
+
+	idPictureCreated, _ := mockStub.CreateCompositeKey("pic", []string{idPicture})
+	profilepic := ProfilePic{
+		PartialPic: "adsasd234dfasdsdf232334",
+	}
+	picAsBytes, _ := json.Marshal(profilepic)
+
+	mockStub.MockTransactionStart(idPictureCreated)
+	e := mockStub.PutState(idPictureCreated, picAsBytes)
+	mockStub.MockTransactionEnd(idPictureCreated)
+
+	if e != nil {
+		fmt.Println(e.Error())
 	}
 
-	salt := "asdfa"
-	id1 := string(claim.GetPayload())
-	fmt.Println("dit is de id  " + id1)
-	response := mockStub.MockInvoke("asdfasdf", [][]byte{[]byte("checkBundle"),
-		[]byte(idBasicForBubdle),
+	response1 := mockStub.MockInvoke("sfsdf23443", [][]byte{[]byte("registerHash"),
+		[]byte(idBundle),
 		[]byte(salt),
+		[]byte(idPicture),
 		[]byte(id1),
+		[]byte(id2),
+		[]byte(id3),
 	})
 
-	if shim.OK != response.Status {
+	fmt.Println(response1.Status)
+	fmt.Println(response1.Message)
 
-		fmt.Printf("error: %s", response.Message)
+	responseCheck := mockStub.MockInvoke("asdfasdf", [][]byte{[]byte("checkBundle"),
+		[]byte(idBundle),
+		[]byte(salt),
+		[]byte(idPicture),
+		[]byte(id1),
+		[]byte(id2),
+		[]byte(id3),
+	})
+
+	if shim.OK != responseCheck.Status {
+
+		fmt.Printf("error: %s", responseCheck.Message)
 		t.Error("Invoke checkBundle failed")
 		t.FailNow()
 	}

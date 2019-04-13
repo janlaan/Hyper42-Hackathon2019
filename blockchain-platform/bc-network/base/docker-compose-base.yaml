@@ -1,0 +1,195 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer0.hyper42.nl:
+    container_name: orderer0.hyper42.nl
+    extends:
+      file: orderer-base.yaml
+      service: orderer-base
+    volumes:
+      - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ../crypto-config/ordererOrganizations/hyper42.nl/orderers/orderer0.hyper42.nl/msp:/var/hyperledger/orderer/msp
+      - ../crypto-config/ordererOrganizations/hyper42.nl/orderers/orderer0.hyper42.nl/tls/:/var/hyperledger/orderer/tls
+    ports:
+      - 7050:7050
+
+  orderer1.hyper42.nl:
+    container_name: orderer1.hyper42.nl
+    extends:
+      file: orderer-base.yaml
+      service: orderer-base
+    volumes:
+      - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ../crypto-config/ordererOrganizations/hyper42.nl/orderers/orderer1.hyper42.nl/msp:/var/hyperledger/orderer/msp
+      - ../crypto-config/ordererOrganizations/hyper42.nl/orderers/orderer1.hyper42.nl/tls/:/var/hyperledger/orderer/tls
+    ports:
+      - 8050:8050
+
+  peer0.org1.hyper42.nl:
+    container_name: peer0.org1.hyper42.nl
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org1.hyper42.nl
+      - CORE_PEER_ADDRESS=peer0.org1.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.hyper42.nl:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org1.hyper42.nl/peers/peer0.org1.hyper42.nl/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org1.hyper42.nl/peers/peer0.org1.hyper42.nl/tls:/etc/hyperledger/fabric/tls
+        - peer0.org1.hyper42.nl:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer1.org1.hyper42.nl:
+    container_name: peer1.org1.hyper42.nl
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.org1.hyper42.nl
+      - CORE_PEER_ADDRESS=peer1.org1.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.hyper42.nl:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org1.hyper42.nl/peers/peer1.org1.hyper42.nl/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org1.hyper42.nl/peers/peer1.org1.hyper42.nl/tls:/etc/hyperledger/fabric/tls
+        - peer1.org1.hyper42.nl:/var/hyperledger/production
+
+    ports:
+      - 8051:7051
+      - 8053:7053
+
+  peer0.org2.hyper42.nl:
+    container_name: peer0.org2.hyper42.nl
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org2.hyper42.nl
+      - CORE_PEER_ADDRESS=peer0.org2.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.hyper42.nl:7051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org2.hyper42.nl/peers/peer0.org2.hyper42.nl/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org2.hyper42.nl/peers/peer0.org2.hyper42.nl/tls:/etc/hyperledger/fabric/tls
+        - peer0.org2.hyper42.nl:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+
+  peer1.org2.hyper42.nl:
+    container_name: peer1.org2.hyper42.nl
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.org2.hyper42.nl
+      - CORE_PEER_ADDRESS=peer1.org2.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.hyper42.nl:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.hyper42.nl:7051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org2.hyper42.nl/peers/peer1.org2.hyper42.nl/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org2.hyper42.nl/peers/peer1.org2.hyper42.nl/tls:/etc/hyperledger/fabric/tls
+        - peer1.org2.hyper42.nl:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053
+
+
+  zookeeper0.hyper42.nl:
+    container_name: zookeeper0.hyper42.nl
+    extends:
+      file: kafka-base.yaml
+      service: zookeeper
+    environment:
+      - ZOO_MY_ID=1
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+
+  zookeeper1.hyper42.nl:
+    container_name: zookeeper1.hyper42.nl
+    extends:
+      file: kafka-base.yaml
+      service: zookeeper
+    environment:
+      - ZOO_MY_ID=2
+    ports:
+      - 12181:2181
+      - 12888:2888
+      - 13888:3888
+
+  zookeeper2.hyper42.nl:
+    container_name: zookeeper2.hyper42.nl
+    extends:
+      file: kafka-base.yaml
+      service: zookeeper
+    environment:
+      - ZOO_MY_ID=3
+    ports:
+      - 22181:2181
+      - 22888:2888
+      - 23888:3888
+
+  kafka0.hyper42.nl:
+    container_name: kafka0.hyper42.nl
+    extends:
+      file: kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=0
+    ports:
+      - 9092:9092
+      - 9093:9093
+
+  kafka1.hyper42.nl:
+    container_name: kafka1.hyper42.nl
+    extends:
+      file: kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=1
+    ports:
+      - 10092:9092
+      - 10093:9093
+
+  kafka2.hyper42.nl:
+    container_name: kafka2.hyper42.nl
+    extends:
+      file: kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=2
+    ports:
+      - 11092:9092
+      - 11093:9093
+
+  kafka3.hyper42.nl:
+    container_name: kafka3.hyper42.nl
+    extends:
+      file: kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=3
+    ports:
+      - 12092:9092
+      - 12093:9093
+      

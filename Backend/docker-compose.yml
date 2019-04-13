@@ -1,32 +1,16 @@
-version: '3'
+version: '3.1'
 
 networks:
   net_hyper42:
     external: true
 
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: "kim_data"
-    restart: always
-    ports:
-      - 27317:27017
-    networks:
+  backend:
+     image: kim-offchain_1.0.0-SNAPSHOT
+     container_name: "kim-offchain"
+     volumes:
+      - ../blockchain-platform/bc-network/crypto-config:/crypto-config
+     ports:
+       - 7080:7080
+     networks:
       - net_hyper42
-    volumes:
-      - mongo-data-data:/data/db
-      - mongo-config-data:/data/configdb
-  kim-offchain:
-    image: kim-offchain
-    container_name: kim-offchain
-    ports:
-      - 8000:8000
-    networks:
-      - net_hyper42
-    depends_on: [mongodb]
-
-volumes:
-   mongo-data-data:
-     driver: local
-   mongo-config-data:
-     driver: local
