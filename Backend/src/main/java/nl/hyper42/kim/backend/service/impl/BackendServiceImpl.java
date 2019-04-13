@@ -23,6 +23,7 @@ import nl.hyper42.kim.backend.model.generated.api.TravelDataResponse;
 import nl.hyper42.kim.backend.model.generated.model.PassportData;
 import nl.hyper42.kim.backend.service.BackendService;
 import nl.hyper42.kim.backend.utils.ApplicationRuntimeException;
+import nl.hyper42.kim.backend.utils.EUStates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,8 @@ public class BackendServiceImpl implements BackendService {
             addClaimId(claimIds, olderEightteen);
             Optional<String[]> olderTwentyOne = registerOlderTwentyOne(passportData, authorisations);
             addClaimId(claimIds, olderTwentyOne);
+            Optional<String[]> euCitizen = registerEUCitizen(passportData, authorisations);
+            addClaimId(claimIds, euCitizen);
             List<String> photoInfo = storeProfilePic(Base64.getDecoder().decode(data.getPhoto()));
             String salt = makeSalt();
             String hashId = storeHash(claimIds, photoInfo.get(0), salt);
@@ -66,6 +69,26 @@ public class BackendServiceImpl implements BackendService {
             LOG.error("Cannot read passport", e);
             throw new ApplicationRuntimeException(e);
         }
+    }
+
+    private Optional<String[]> registerEUCitizen(PassportData passportData, List<Authorisation> authorisations) throws InterruptedException {
+        Optional<Authorisation> foundAuthorisation = findAuthorisation(ClaimCodes.EUCitizen.name(), authorisations);
+        if (foundAuthorisation.isPresent()) {
+            boolean isEU = false;
+            try {
+                EUStates.valueOf(passportData.getNationality());
+                isEU = true;
+            } catch (IllegalArgumentException e) {
+                // not eu
+            }
+            String id = UUID.randomUUID().toString();
+            Authorisation authorisation = foundAuthorisation.get();
+            registerClaim(id, ClaimCodes.EUCitizen.name(), Boolean.valueOf(isEU).toString(), authorisation.getWho(), authorisation.getWhere(),
+                    authorisation.getRole());
+            return Optional.of(new String[] { ClaimCodes.EUCitizen.name(), id });
+
+        }
+        return Optional.empty();
     }
 
     private void addClaimId(Map<String, String> claimIds, Optional<String[]> newClaim) {
