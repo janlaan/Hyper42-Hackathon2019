@@ -68,11 +68,13 @@ public class BackendServiceImplTest {
         Assert.assertEquals(Base64.getEncoder().encodeToString("34".getBytes()), argsCapture.getAllValues().get(13));
 
         Assert.assertEquals("registerHash", methodeCapture.getAllValues().get(3));
-        Assert.assertNotNull(argsCapture.getAllValues().get(14));
-        Assert.assertNotNull(argsCapture.getAllValues().get(15));
+        Assert.assertNotNull(argsCapture.getAllValues().get(14)); // address
+        Assert.assertNotNull(argsCapture.getAllValues().get(15)); // salt
+        Assert.assertEquals(argsCapture.getAllValues().get(12), argsCapture.getAllValues().get(16)); // picture address
+        Assert.assertEquals(argsCapture.getAllValues().get(6), argsCapture.getAllValues().get(17)); // claim2 address
+        Assert.assertEquals(argsCapture.getAllValues().get(0), argsCapture.getAllValues().get(18)); // claim1 address
 
         Assert.assertNotNull(travelDataResponse.getDataHashAddress());
-        Assert.assertNotNull(travelDataResponse.getDataHash());
         Assert.assertEquals(2, travelDataResponse.getClaimAddresses().size());
         List<ClaimAddress> claimAddresses = travelDataResponse.getClaimAddresses();
         Assert.assertNotNull(claimAddresses.get(0).getClaimAddress());

@@ -23,7 +23,6 @@ import nl.hyper42.kim.backend.model.generated.api.TravelDataResponse;
 import nl.hyper42.kim.backend.model.generated.model.PassportData;
 import nl.hyper42.kim.backend.service.BackendService;
 import nl.hyper42.kim.backend.utils.ApplicationRuntimeException;
-import nl.hyper42.kim.backend.utils.HashUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +57,11 @@ public class BackendServiceImpl implements BackendService {
             addClaimId(claimIds, olderTwentyOne);
             List<String> photoInfo = storeProfilePic(Base64.getDecoder().decode(data.getPhoto()));
             String salt = makeSalt();
-            List<String> hashInfo = storeHash(claimIds, photoInfo.get(0), salt);
+            String hashId = storeHash(claimIds, photoInfo.get(0), salt);
             return new TravelDataResponse()
                     .withClaimAddresses(claimIds.entrySet().stream()
                             .map(claim -> new ClaimAddress().withClaimName(claim.getKey()).withClaimAddress(claim.getValue())).collect(Collectors.toList()))
-                    .withDataHash(hashInfo.get(1)).withDataHashAddress(hashInfo.get(0)).withDataHashSalt(salt).withPhotoAddress(photoInfo.get(0))
-                    .withPhotoKey(photoInfo.get(1));
+                    .withDataHashAddress(hashId).withDataHashSalt(salt).withPhotoAddress(photoInfo.get(0)).withPhotoKey(photoInfo.get(1));
         } catch (IOException | InterruptedException e) {
             LOG.error("Cannot read passport", e);
             throw new ApplicationRuntimeException(e);
@@ -77,11 +75,17 @@ public class BackendServiceImpl implements BackendService {
 
     }
 
-    private List<String> storeHash(Map<String, String> claimIds, String photoId, String salt) throws InterruptedException {
-        String hash = HashUtil.getSHA(String.join("", claimIds.values()) + photoId + salt);
-        String id = UUID.randomUUID().toString();
-        hlfInvoker.invokeChaincode("registerHash", id, salt, hash);
-        return Arrays.asList(id, hash);
+    private String storeHash(Map<String, String> claimIds, String photoId, String salt) throws InterruptedException {
+        String hashId = UUID.randomUUID().toString();
+        String[] args = new String[claimIds.size() + 3];
+        args[0] = hashId;
+        args[1] = salt;
+        args[2] = photoId;
+        String[] claims = claimIds.values().toArray(new String[0]);
+
+        System.arraycopy(claims, 0, args, 3, claims.length);
+        hlfInvoker.invokeChaincode("registerHash", args);
+        return hashId;
     }
 
     private String makeSalt() {
