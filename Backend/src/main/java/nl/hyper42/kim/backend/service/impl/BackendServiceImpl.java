@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.ParametersAreNonnullByDefault;
 import nl.hyper42.kim.backend.claim.ClaimCodes;
 import nl.hyper42.kim.backend.dao.HLFInvoker;
 import nl.hyper42.kim.backend.model.generated.api.Authorisation;
+import nl.hyper42.kim.backend.model.generated.api.ClaimAddress;
 import nl.hyper42.kim.backend.model.generated.api.TravelDataRequest;
 import nl.hyper42.kim.backend.model.generated.api.TravelDataResponse;
 import nl.hyper42.kim.backend.model.generated.model.PassportData;
@@ -50,24 +52,36 @@ public class BackendServiceImpl implements BackendService {
         try {
             PassportData passportData = mapper.readValue(data.getPassportData(), PassportData.class);
             List<Authorisation> authorisations = data.getAuthorisation();
-            registerOlderEightteen(passportData, claimIds, authorisations);
-            registerOlderTwentyOne(passportData, claimIds, authorisations);
-            String photoId = storeProfilePic(Base64.getDecoder().decode(data.getPhoto()));
+            Optional<String[]> olderEightteen = registerOlderEightteen(passportData, authorisations);
+            addClaimId(claimIds, olderEightteen);
+            Optional<String[]> olderTwentyOne = registerOlderTwentyOne(passportData, authorisations);
+            addClaimId(claimIds, olderTwentyOne);
+            List<String> photoInfo = storeProfilePic(Base64.getDecoder().decode(data.getPhoto()));
             String salt = makeSalt();
-            String hashId = storeHash(claimIds, photoId, salt);
+            List<String> hashInfo = storeHash(claimIds, photoInfo.get(0), salt);
+            return new TravelDataResponse()
+                    .withClaimAddresses(claimIds.entrySet().stream()
+                            .map(claim -> new ClaimAddress().withClaimName(claim.getKey()).withClaimAddress(claim.getValue())).collect(Collectors.toList()))
+                    .withDataHash(hashInfo.get(1)).withDataHashAddress(hashInfo.get(0)).withDataHashSalt(salt).withPhotoAddress(photoInfo.get(0))
+                    .withPhotoKey(photoInfo.get(1));
         } catch (IOException | InterruptedException e) {
             LOG.error("Cannot read passport", e);
             throw new ApplicationRuntimeException(e);
         }
-        return null;
     }
 
-    private String storeHash(Map<String, String> claimIds, String photoId, String salt) throws InterruptedException {
-        String id = UUID.randomUUID().toString();
+    private void addClaimId(Map<String, String> claimIds, Optional<String[]> newClaim) {
+        if (newClaim.isPresent()) {
+            claimIds.put(newClaim.get()[0], newClaim.get()[1]);
+        }
 
+    }
+
+    private List<String> storeHash(Map<String, String> claimIds, String photoId, String salt) throws InterruptedException {
         String hash = HashUtil.getSHA(String.join("", claimIds.values()) + photoId + salt);
+        String id = UUID.randomUUID().toString();
         hlfInvoker.invokeChaincode("registerHash", id, salt, hash);
-        return id;
+        return Arrays.asList(id, hash);
     }
 
     private String makeSalt() {
@@ -77,12 +91,12 @@ public class BackendServiceImpl implements BackendService {
         return new String(salt);
     }
 
-    private String storeProfilePic(byte[] photo) throws InterruptedException {
+    private List<String> storeProfilePic(byte[] photo) throws InterruptedException {
         List<byte[]> photoParts = cryptoPhoto(photo);
         // part one is key, part two is cryptographicly photo.
         String id = UUID.randomUUID().toString();
         hlfInvoker.invokeChaincode("storeProfilePic", id, Base64.getEncoder().encodeToString(photoParts.get(1)));
-        return id;
+        return Arrays.asList(id, Base64.getEncoder().encodeToString(photoParts.get(1)));
 
     }
 
@@ -93,14 +107,12 @@ public class BackendServiceImpl implements BackendService {
         return Arrays.asList(key, crypto);
     }
 
-    private void registerOlderTwentyOne(PassportData passportData, Map<String, String> claimIds, List<Authorisation> authorisations)
-            throws InterruptedException {
-        registerOlderThan(passportData, claimIds, ClaimCodes.OlderTwentyOne.name(), 21, authorisations);
+    private Optional<String[]> registerOlderTwentyOne(PassportData passportData, List<Authorisation> authorisations) throws InterruptedException {
+        return registerOlderThan(passportData, ClaimCodes.OlderTwentyOne.name(), 21, authorisations);
     }
 
-    private void registerOlderEightteen(PassportData passportData, Map<String, String> claimIds, List<Authorisation> authorisations)
-            throws InterruptedException {
-        registerOlderThan(passportData, claimIds, ClaimCodes.OlderEightteen.name(), 18, authorisations);
+    private Optional<String[]> registerOlderEightteen(PassportData passportData, List<Authorisation> authorisations) throws InterruptedException {
+        return registerOlderThan(passportData, ClaimCodes.OlderEightteen.name(), 18, authorisations);
     }
 
     private Optional<Authorisation> findAuthorisation(String name, List<Authorisation> authorisations) {
@@ -108,7 +120,7 @@ public class BackendServiceImpl implements BackendService {
 
     }
 
-    private void registerOlderThan(PassportData passportData, Map<String, String> claimIds, String claimName, int check, List<Authorisation> authorisations)
+    private Optional<String[]> registerOlderThan(PassportData passportData, String claimName, int check, List<Authorisation> authorisations)
             throws InterruptedException {
         Optional<Authorisation> foundAuthorisation = findAuthorisation(claimName, authorisations);
         if (foundAuthorisation.isPresent()) {
@@ -117,8 +129,9 @@ public class BackendServiceImpl implements BackendService {
             LocalDate dob = LocalDate.parse(passportData.getDateOfBirth());
             boolean b = Period.between(dob, LocalDate.now()).getYears() >= check;
             registerClaim(id, claimName, Boolean.valueOf(b).toString(), authorisation.getWho(), authorisation.getWhere(), authorisation.getRole());
-            claimIds.put(claimName, id);
+            return Optional.of(new String[] { claimName, id });
         }
+        return Optional.empty();
     }
 
     private void registerClaim(String id, String claim, String answer, List<String> who, List<String> where, List<String> role) throws InterruptedException {

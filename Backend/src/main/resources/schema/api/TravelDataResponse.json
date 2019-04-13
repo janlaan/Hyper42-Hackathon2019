@@ -1,11 +1,10 @@
 {
   "dataHashAddress": "salty",
   "dataHashSalt": "salty",
-  "dataHash": "someHash",
+  "dataHash": "someBase64EncodedHash",
   "claimAddresses": [
-  	"adress1",
-  	"adress2"
-  ],
-  "photoKey": "somebytes",
+  	{"claimName": "nameOfClaim", "claimAddress": "addressOfClaim"}]
+  ,
+  "photoKey": "someBase64EncodedBytes",
   "photoAddress": "address3"
 }

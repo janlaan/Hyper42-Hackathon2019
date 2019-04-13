@@ -7,7 +7,9 @@ import java.util.List;
 import nl.hyper42.kim.backend.claim.ClaimCodes;
 import nl.hyper42.kim.backend.dao.HLFInvoker;
 import nl.hyper42.kim.backend.model.generated.api.Authorisation;
+import nl.hyper42.kim.backend.model.generated.api.ClaimAddress;
 import nl.hyper42.kim.backend.model.generated.api.TravelDataRequest;
+import nl.hyper42.kim.backend.model.generated.api.TravelDataResponse;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +45,7 @@ public class BackendServiceImplTest {
         TravelDataRequest dataRequest = new TravelDataRequest().withPhoto(Base64.getEncoder().encodeToString("1234".getBytes())).withPassportData(passportData)
                 .withTravelData(travelData).withAuthorisation(authorisations);
 
-        backendServiceImpl.submitData(dataRequest);
+        TravelDataResponse travelDataResponse = backendServiceImpl.submitData(dataRequest);
 
         Assert.assertEquals("registerClaim", methodeCapture.getAllValues().get(0));
         Assert.assertNotNull(argsCapture.getAllValues().get(0));
@@ -68,6 +70,17 @@ public class BackendServiceImplTest {
         Assert.assertEquals("registerHash", methodeCapture.getAllValues().get(3));
         Assert.assertNotNull(argsCapture.getAllValues().get(14));
         Assert.assertNotNull(argsCapture.getAllValues().get(15));
+
+        Assert.assertNotNull(travelDataResponse.getDataHashAddress());
+        Assert.assertNotNull(travelDataResponse.getDataHash());
+        Assert.assertEquals(2, travelDataResponse.getClaimAddresses().size());
+        List<ClaimAddress> claimAddresses = travelDataResponse.getClaimAddresses();
+        Assert.assertNotNull(claimAddresses.get(0).getClaimAddress());
+        Assert.assertEquals("OlderTwentyOne", claimAddresses.get(0).getClaimName());
+        Assert.assertNotNull(claimAddresses.get(1).getClaimAddress());
+        Assert.assertEquals("OlderEightteen", claimAddresses.get(1).getClaimName());
+        Assert.assertNotNull(travelDataResponse.getPhotoAddress());
+        Assert.assertEquals("MzQ=", travelDataResponse.getPhotoKey());
     }
 
     @Test
