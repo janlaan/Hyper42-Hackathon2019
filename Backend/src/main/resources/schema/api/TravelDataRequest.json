@@ -1,0 +1,20 @@
+{
+	"passportData": "somebytes",
+	"photo": "base64Photo",
+	"travelData": "somebytes",
+	"Authorisation": [{
+		"ClaimName": "MyName",
+		"Who": [
+			"id1",
+			"id10"
+		],
+		"Where": [
+			"AMS",
+			"BRU"
+		],
+		"Role": [
+			"Shop",
+			"Launch"
+		]
+	}]
+}
