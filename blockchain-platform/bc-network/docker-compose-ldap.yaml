@@ -1,0 +1,50 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+networks:
+  hyper42:
+
+services:
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    environment:
+      LDAP_TLS: 'true'
+      LDAP_TLS_CRT_FILENAME: 'fullchain.pem'
+      LDAP_TLS_KEY_FILENAME: 'privkey.pem'
+      LDAP_TLS_CA_CRT_FILENAME: 'fullchain.pem'
+      LDAP_ORGANISATION: "Hyper42"
+      LDAP_DOMAIN: "hyper42.nl"
+      LDAP_BASE_DN: "dc=hyper42.nl,dc=nl"
+      LDAP_ADMIN_PASSWORD: "verysecret"
+      LDAP_TLS_CIPHER_SUITE: "NORMAL"
+      LDAP_TLS_VERIFY_CLIENT: "allow"
+      LOGLEVEL: "debug"
+    tty: true
+    stdin_open: true
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - /container/service/slapd/assets/certs/
+    ports:
+      - "389:389"
+      - "639:639"
+    networks:
+      - hyper42
+    hostname: "hyper42.nl"
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS=false:
+    ports:
+      - "8080:80"
+    networks:
+      - hyper42
+    depends_on:
+      - openldap

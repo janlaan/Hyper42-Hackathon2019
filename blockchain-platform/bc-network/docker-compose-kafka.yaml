@@ -1,0 +1,183 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer0.hyper42.nl:
+  orderer1.hyper42.nl:
+  peer0.org1.hyper42.nl:
+  peer1.org1.hyper42.nl:
+  peer0.org2.hyper42.nl:
+  peer1.org2.hyper42.nl:
+
+networks:
+  hyper42:
+    
+services:
+
+  orderer0.hyper42.nl:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer0.hyper42.nl
+    container_name: orderer0.hyper42.nl
+    depends_on:
+      - kafka0.hyper42.nl
+      - kafka1.hyper42.nl
+      - kafka2.hyper42.nl
+      - kafka3.hyper42.nl  
+    networks:
+      - hyper42
+      
+  orderer1.hyper42.nl:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer1.hyper42.nl
+    container_name: orderer1.hyper42.nl
+    depends_on:
+      - kafka0.hyper42.nl
+      - kafka1.hyper42.nl
+      - kafka2.hyper42.nl
+      - kafka3.hyper42.nl  
+    networks:
+      - hyper42      
+
+  peer0.org1.hyper42.nl:
+    container_name: peer0.org1.hyper42.nl
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org1.hyper42.nl
+    networks:
+      - hyper42      
+
+  peer1.org1.hyper42.nl:
+    container_name: peer1.org1.hyper42.nl
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org1.hyper42.nl
+    networks:
+      - hyper42      
+      
+  peer0.org2.hyper42.nl:
+    container_name: peer0.org2.hyper42.nl
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org2.hyper42.nl
+    networks:
+      - hyper42      
+
+  peer1.org2.hyper42.nl:
+    container_name: peer1.org2.hyper42.nl
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org2.hyper42.nl
+    networks:
+      - hyper42
+
+  zookeeper0.hyper42.nl:
+    container_name: zookeeper0.hyper42.nl
+    extends:
+      file: base/docker-compose-base.yaml
+      service: zookeeper0.hyper42.nl
+    networks:
+      - hyper42      
+
+  zookeeper1.hyper42.nl:
+    container_name: zookeeper1.hyper42.nl
+    extends:
+      file: base/docker-compose-base.yaml
+      service: zookeeper1.hyper42.nl
+    networks:
+      - hyper42      
+
+  zookeeper2.hyper42.nl:
+    container_name: zookeeper2.hyper42.nl
+    extends:
+      file: base/docker-compose-base.yaml
+      service: zookeeper2.hyper42.nl
+    networks:
+      - hyper42      
+
+  kafka0.hyper42.nl:
+    container_name: kafka0.hyper42.nl
+    extends:
+      file: base/docker-compose-base.yaml
+      service: kafka0.hyper42.nl
+    networks:
+      - hyper42         
+    depends_on:
+      - zookeeper0.hyper42.nl
+      - zookeeper1.hyper42.nl
+      - zookeeper2.hyper42.nl
+
+  kafka1.hyper42.nl:
+    container_name: kafka1.hyper42.nl
+    extends:
+      file: base/docker-compose-base.yaml
+      service: kafka1.hyper42.nl
+    networks:
+      - hyper42         
+    depends_on:
+      - zookeeper0.hyper42.nl
+      - zookeeper1.hyper42.nl
+      - zookeeper2.hyper42.nl
+
+  kafka2.hyper42.nl:
+    container_name: kafka2.hyper42.nl
+    extends:
+      file: base/docker-compose-base.yaml
+      service: kafka2.hyper42.nl
+    networks:
+      - hyper42         
+    depends_on:
+      - zookeeper0.hyper42.nl
+      - zookeeper1.hyper42.nl
+      - zookeeper2.hyper42.nl
+
+  kafka3.hyper42.nl:
+    container_name: kafka3.hyper42.nl
+    extends:
+      file: base/docker-compose-base.yaml
+      service: kafka3.hyper42.nl
+    networks:
+      - hyper42         
+    depends_on:
+      - zookeeper0.hyper42.nl
+      - zookeeper1.hyper42.nl
+      - zookeeper2.hyper42.nl
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org1.hyper42.nl:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.hyper42.nl/peers/peer0.org1.hyper42.nl/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.hyper42.nl/peers/peer0.org1.hyper42.nl/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.hyper42.nl/peers/peer0.org1.hyper42.nl/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.hyper42.nl/users/Admin@org1.hyper42.nl/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    #command: /bin/bash -c 'sleep 1000'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../../Blockchain/src/kim-chaincode/:/opt/gopath/src/kim-chaincode/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    networks:
+      - hyper42
+    depends_on:
+      - orderer0.hyper42.nl
+      - orderer1.hyper42.nl
+      - peer0.org2.hyper42.nl
+      - peer1.org2.hyper42.nl
+      - peer0.org1.hyper42.nl
+      - peer1.org1.hyper42.nl

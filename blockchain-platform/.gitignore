@@ -1,0 +1,7 @@
+.DS_Store
+bin/
+crypto-config/
+**/channel-artifacts/*.tx
+**/channel-artifacts/genesis.block
+docker-compose-e2e.yaml
+.attach_pid*
