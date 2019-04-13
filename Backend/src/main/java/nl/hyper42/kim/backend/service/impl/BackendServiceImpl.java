@@ -56,6 +56,8 @@ public class BackendServiceImpl implements BackendService {
             addClaimId(claimIds, olderEightteen);
             Optional<String[]> olderTwentyOne = registerOlderTwentyOne(passportData, authorisations);
             addClaimId(claimIds, olderTwentyOne);
+            Optional<String[]> outsideEeu = registerOutsideEu(passportData, authorisations);
+            addClaimId(claimIds, outsideEeu);
             Optional<String[]> euCitizen = registerEUCitizen(passportData, authorisations);
             addClaimId(claimIds, euCitizen);
             List<String> photoInfo = storeProfilePic(Base64.getDecoder().decode(data.getPhoto()));
@@ -69,6 +71,25 @@ public class BackendServiceImpl implements BackendService {
             LOG.error("Cannot read passport", e);
             throw new ApplicationRuntimeException(e);
         }
+    }
+
+    private Optional<String[]> registerOutsideEu(PassportData passportData, List<Authorisation> authorisations) throws InterruptedException {
+        Optional<Authorisation> foundAuthorisation = findAuthorisation(ClaimCodes.TravelOutsideEU.name(), authorisations);
+        if (foundAuthorisation.isPresent()) {
+            boolean outsideEU = false;
+            try {
+                EUStates.valueOf(passportData.getNationality());
+                outsideEU = true;
+            } catch (IllegalArgumentException e) {
+                // not leaving eu
+            }
+            String id = UUID.randomUUID().toString();
+            Authorisation authorisation = foundAuthorisation.get();
+            registerClaim(id, ClaimCodes.TravelOutsideEU.name(), Boolean.valueOf(outsideEU).toString(), authorisation.getWho(), authorisation.getWhere(),
+                    authorisation.getRole());
+            return Optional.of(new String[] { ClaimCodes.TravelOutsideEU.name(), id });
+        }
+        return Optional.empty();
     }
 
     private Optional<String[]> registerEUCitizen(PassportData passportData, List<Authorisation> authorisations) throws InterruptedException {
@@ -86,7 +107,6 @@ public class BackendServiceImpl implements BackendService {
             registerClaim(id, ClaimCodes.EUCitizen.name(), Boolean.valueOf(isEU).toString(), authorisation.getWho(), authorisation.getWhere(),
                     authorisation.getRole());
             return Optional.of(new String[] { ClaimCodes.EUCitizen.name(), id });
-
         }
         return Optional.empty();
     }

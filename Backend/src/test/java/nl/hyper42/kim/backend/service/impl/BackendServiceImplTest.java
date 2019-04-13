@@ -44,7 +44,9 @@ public class BackendServiceImplTest {
                 .withWhere(Arrays.asList("AMS2", "BRU2")).withRole(Arrays.asList("Lounge2", "Shop2"));
         Authorisation euCitizen = new Authorisation().withClaimName(ClaimCodes.EUCitizen.name()).withWho(Arrays.asList("KLM2", "Transavia2"))
                 .withWhere(Arrays.asList("AMS2", "BRU2")).withRole(Arrays.asList("Lounge2", "Shop2"));
-        List<Authorisation> authorisations = Arrays.asList(aC18, aC21, euCitizen);
+        Authorisation outsideEu = new Authorisation().withClaimName(ClaimCodes.TravelOutsideEU.name()).withWho(Arrays.asList("KLM2", "Transavia2"))
+                .withWhere(Arrays.asList("AMS2", "BRU2")).withRole(Arrays.asList("Lounge2", "Shop2"));
+        List<Authorisation> authorisations = Arrays.asList(aC18, aC21, euCitizen, outsideEu);
         TravelDataRequest dataRequest = new TravelDataRequest().withPhoto(Base64.getEncoder().encodeToString("1234".getBytes())).withPassportData(passportData)
                 .withTravelData(travelData).withAuthorisation(authorisations);
 
@@ -68,33 +70,44 @@ public class BackendServiceImplTest {
 
         Assert.assertEquals("registerClaim", methodeCapture.getAllValues().get(2));
         Assert.assertNotNull(argsCapture.getAllValues().get(12));
-        Assert.assertEquals("EUCitizen", argsCapture.getAllValues().get(13));
+        Assert.assertEquals("TravelOutsideEU", argsCapture.getAllValues().get(13));
         Assert.assertEquals("true", argsCapture.getAllValues().get(14));
         Assert.assertEquals("KLM2,Transavia2", argsCapture.getAllValues().get(15));
         Assert.assertEquals("AMS2,BRU2", argsCapture.getAllValues().get(16));
         Assert.assertEquals("Lounge2,Shop2", argsCapture.getAllValues().get(17));
 
-        Assert.assertEquals("storeProfilePic", methodeCapture.getAllValues().get(3));
+        Assert.assertEquals("registerClaim", methodeCapture.getAllValues().get(3));
         Assert.assertNotNull(argsCapture.getAllValues().get(18));
-        Assert.assertEquals(Base64.getEncoder().encodeToString("34".getBytes()), argsCapture.getAllValues().get(19));
+        Assert.assertEquals("EUCitizen", argsCapture.getAllValues().get(19));
+        Assert.assertEquals("true", argsCapture.getAllValues().get(20));
+        Assert.assertEquals("KLM2,Transavia2", argsCapture.getAllValues().get(21));
+        Assert.assertEquals("AMS2,BRU2", argsCapture.getAllValues().get(22));
+        Assert.assertEquals("Lounge2,Shop2", argsCapture.getAllValues().get(23));
 
-        Assert.assertEquals("registerHash", methodeCapture.getAllValues().get(4));
-        Assert.assertNotNull(argsCapture.getAllValues().get(20)); // address
-        Assert.assertNotNull(argsCapture.getAllValues().get(21)); // salt
-        Assert.assertEquals(argsCapture.getAllValues().get(18), argsCapture.getAllValues().get(22)); // picture address
-        Assert.assertEquals(argsCapture.getAllValues().get(0), argsCapture.getAllValues().get(25)); // claim1 address
-        Assert.assertEquals(argsCapture.getAllValues().get(6), argsCapture.getAllValues().get(23)); // claim2 address
-        Assert.assertEquals(argsCapture.getAllValues().get(12), argsCapture.getAllValues().get(24)); // eucitizen address
+        Assert.assertEquals("storeProfilePic", methodeCapture.getAllValues().get(4));
+        Assert.assertNotNull(argsCapture.getAllValues().get(24));
+        Assert.assertEquals(Base64.getEncoder().encodeToString("34".getBytes()), argsCapture.getAllValues().get(25));
+
+        Assert.assertEquals("registerHash", methodeCapture.getAllValues().get(5));
+        Assert.assertNotNull(argsCapture.getAllValues().get(26)); // address
+        Assert.assertNotNull(argsCapture.getAllValues().get(27)); // salt
+        Assert.assertEquals(argsCapture.getAllValues().get(24), argsCapture.getAllValues().get(28)); // picture address
+        Assert.assertEquals(argsCapture.getAllValues().get(6), argsCapture.getAllValues().get(29)); // claim1 address
+        Assert.assertEquals(argsCapture.getAllValues().get(18), argsCapture.getAllValues().get(30)); // claim2 address
+        Assert.assertEquals(argsCapture.getAllValues().get(12), argsCapture.getAllValues().get(31)); // eucitizen address
+        Assert.assertEquals(argsCapture.getAllValues().get(0), argsCapture.getAllValues().get(32)); // eucitizen address
 
         Assert.assertNotNull(travelDataResponse.getDataHashAddress());
-        Assert.assertEquals(3, travelDataResponse.getClaimAddresses().size());
+        Assert.assertEquals(4, travelDataResponse.getClaimAddresses().size());
         List<ClaimAddress> claimAddresses = travelDataResponse.getClaimAddresses();
         Assert.assertNotNull(claimAddresses.get(0).getClaimAddress());
         Assert.assertEquals("OlderTwentyOne", claimAddresses.get(0).getClaimName());
         Assert.assertNotNull(claimAddresses.get(1).getClaimAddress());
         Assert.assertEquals("EUCitizen", claimAddresses.get(1).getClaimName());
         Assert.assertNotNull(claimAddresses.get(2).getClaimAddress());
-        Assert.assertEquals("OlderEightteen", claimAddresses.get(2).getClaimName());
+        Assert.assertEquals("TravelOutsideEU", claimAddresses.get(2).getClaimName());
+        Assert.assertNotNull(claimAddresses.get(3).getClaimAddress());
+        Assert.assertEquals("OlderEightteen", claimAddresses.get(3).getClaimName());
         Assert.assertNotNull(travelDataResponse.getPhotoAddress());
         Assert.assertEquals("MzQ=", travelDataResponse.getPhotoKey());
     }
