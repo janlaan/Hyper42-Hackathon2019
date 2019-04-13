@@ -46,23 +46,23 @@ func TestDigitalIdentity_Invoke(t *testing.T) {
 	}
 
 	if response4.Message != "Incorrect number of arguments. Expecting at least 5." {
-		fmt.Println(response4.Message)
 		t.Error("unexpected error message on response4.")
 		t.FailNow()
 	}
 
 	if response5.Message != "Incorrect number of arguments. Expecting at least 4." {
-		fmt.Println(response5.Message)
 		t.Error("unexpected error message on response5.")
 		t.FailNow()
 	}
-	if response6.Message != "Incorrect number of arguments. Expecting at least 3." {
+	if response6.Message != "Incorrect number of arguments. Expecting at least 5." {
 		t.Error("unexpected error message on response6.")
 		t.FailNow()
 	}
 	if response7.Message != "Error: CTO-1: Invalid Smart Contract function name." {
 		t.Error("unexpected error message on response7.")
 		t.FailNow()
+	} else {
+		fmt.Println("everything is ok")
 	}
 
 }

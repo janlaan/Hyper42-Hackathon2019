@@ -91,11 +91,15 @@ func CheckHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	unHashed := args[1]
 
+	objectType := "pic"
+
 	for i := 2; i < len(args); i++ {
-		if !isIdValid(APIstub, args[i]) {
-			return shim.Error("Id is not valid")
+		id, e := APIstub.CreateCompositeKey(objectType, []string{args[i]})
+		if !isIdValid(APIstub, id) || e != nil {
+			return shim.Error(id + " Id is not valid")
 		}
-		unHashed = unHashed + args[i]
+		unHashed = unHashed + id
+		objectType = "claim"
 	}
 	responseGetBundle, e := APIstub.GetState(idHash)
 	if e != nil {
@@ -139,7 +143,7 @@ func RegisterHash(APIstub shim.ChaincodeStubInterface, args []string) sc.Respons
 		if !isIdValid(APIstub, id) || e != nil {
 			return shim.Error(id + " Id is not valid")
 		}
-		unHashed = unHashed + args[i]
+		unHashed = unHashed + id
 		objectType = "claim"
 	}
 
