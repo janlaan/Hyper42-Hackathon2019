@@ -1,0 +1,11 @@
+{
+  "dataHashAddress": "salty",
+  "dataHashSalt": "salty",
+  "dataHash": "someHash",
+  "claimAddresses": [
+  	"adress1",
+  	"adress2"
+  ],
+  "photoKey": "somebytes",
+  "photoAddress": "address3"
+}
